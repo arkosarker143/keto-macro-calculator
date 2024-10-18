@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keto Macro Calculator</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to CSS file (if you create one) -->
+</head>
+<body>
+    <header>
+        <h1>Keto Macro Calculator</h1>
+        <p>Your go-to tool for calculating keto macros!</p>
+    </header>
+    
+    <main>
+        <section>
+            <h2>Calculate Your Macros</h2>
+            <form id="calculator-form">
+                <label for="weight">Weight (in lbs):</label>
+                <input type="number" id="weight" required>
+
+                <label for="goal">Goal:</label>
+                <select id="goal">
+                    <option value="lose">Lose Weight</option>
+                    <option value="maintain">Maintain Weight</option>
+                    <option value="gain">Gain Weight</option>
+                </select>
+
+                <label for="activity">Activity Level:</label>
+                <select id="activity">
+                    <option value="sedentary">Sedentary</option>
+                    <option value="light">Lightly Active</option>
+                    <option value="moderate">Moderately Active</option>
+                    <option value="active">Active</option>
+                </select>
+
+                <button type="submit">Calculate</button>
+            </form>
+
+            <div id="results" style="display:none;">
+                <h3>Your Macro Results:</h3>
+                <p id="calories"></p>
+                <p id="carbs"></p>
+                <p id="protein"></p>
+                <p id="fat"></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Keto Macro Calculator</p>
+    </footer>
+
+    <script src="script.js"></script> <!-- Link to JavaScript file (if you create one) -->
+</body>
+</html>
 
