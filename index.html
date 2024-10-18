@@ -158,43 +158,78 @@
     });
 
     function calculateMacros() {
-      // Placeholder function for macro calculation logic
       const age = document.getElementById('age').value;
       const weight = document.getElementById('weight').value;
       const height = document.getElementById('height').value;
       const gender = document.getElementById('gender').value;
       const activity = document.getElementById('activity').value;
       const goal = document.getElementById('goal').value;
-
       const isAdvanced = document.getElementById('mode').value === 'advanced';
       
-      let fat = 0, protein = 0, carbs = 0;
-      if (isAdvanced) {
-        fat = document.getElementById('fat').value || 0;
-        protein = document.getElementById('protein').value || 0;
-        carbs = document.getElementById('carbs').value || 0;
+      // Basic BMR Calculation (Harris-Benedict Formula)
+      let BMR;
+      if (gender === 'male') {
+        BMR = 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age);
       } else {
-        // Use default percentages based on goal
+        BMR = 447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age);
+      }
+
+      // Activity Level Multiplier
+      let activityMultiplier;
+      switch (activity) {
+        case 'sedentary':
+          activityMultiplier = 1.2;
+          break;
+        case 'light':
+          activityMultiplier = 1.375;
+          break;
+        case 'moderate':
+          activityMultiplier = 1.55;
+          break;
+        case 'active':
+          activityMultiplier = 1.725;
+          break;
+        default:
+          activityMultiplier = 1.2;
+      }
+
+      // TDEE (Total Daily Energy Expenditure)
+      const TDEE = BMR * activityMultiplier;
+
+      // Set default macro ratios based on goal
+      let fatPercentage, proteinPercentage, carbPercentage;
+      if (isAdvanced) {
+        fatPercentage = document.getElementById('fat').value || 0;
+        proteinPercentage = document.getElementById('protein').value || 0;
+        carbPercentage = document.getElementById('carbs').value || 0;
+      } else {
         if (goal === 'weightloss') {
-          fat = 70;
-          protein = 25;
-          carbs = 5;
+          fatPercentage = 70;
+          proteinPercentage = 25;
+          carbPercentage = 5;
         } else if (goal === 'maintenance') {
-          fat = 65;
-          protein = 30;
-          carbs = 5;
+          fatPercentage = 65;
+          proteinPercentage = 30;
+          carbPercentage = 5;
         } else {
-          fat = 60;
-          protein = 35;
-          carbs = 5;
+          fatPercentage = 60;
+          proteinPercentage = 35;
+          carbPercentage = 5;
         }
       }
 
+      // Convert macro percentages into grams
+      const fatGrams = ((fatPercentage / 100) * TDEE) / 9;
+      const proteinGrams = ((proteinPercentage / 100) * TDEE) / 4;
+      const carbGrams = ((carbPercentage / 100) * TDEE) / 4;
+
+      // Display results
       document.getElementById('result').innerHTML = `
         <h3>Your Macro Results</h3>
-        <p>Fat: ${fat}%</p>
-        <p>Protein: ${protein}%</p>
-        <p>Carbs: ${carbs}%</p>
+        <p>Total Daily Energy Expenditure (TDEE): ${Math.round(TDEE)} kcal/day</p>
+        <p>Fat: ${Math.round(fatGrams)}g/day (${fatPercentage}%)</p>
+        <p>Protein: ${Math.round(proteinGrams)}g/day (${proteinPercentage}%)</p>
+        <p>Carbohydrates: ${Math.round(carbGrams)}g/day (${carbPercentage}%)</p>
       `;
     }
   </script>
