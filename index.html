@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keto Macro Calculator</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles for better layout */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .half-width {
+            display: inline-block;
+            width: 45%;
+            vertical-align: top;
+        }
+        .full-width {
+            width: 100%;
+        }
+        #chart-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #myChart {
+            width: 300px; /* Adjusted width */
+            height: 300px; /* Adjusted height */
+        }
+        .planner-day {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -67,6 +96,7 @@
             <button type="button" onclick="calculateMacros()">Calculate</button>
             <button type="button" onclick="clearForm()">Clear</button>
             <button type="button" onclick="saveToLocalStorage()">Save</button>
+            <button type="button" onclick="downloadPDF()">Download PDF</button>
         </form>
 
         <div id="result"></div>
@@ -89,6 +119,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script>
         function toggleAdvancedMode() {
             const mode = document.getElementById('mode').value;
@@ -178,34 +209,14 @@
             const carbGrams = (totalCarbs / 4).toFixed(2);
 
             document.getElementById('result').innerHTML = `
-                <h2>Your Results:</h2>
-                <p><strong>BMR:</strong> ${bmr.toFixed(2)} kcal</p>
-                <p><strong>TDEE:</strong> ${tdee.toFixed(2)} kcal</p>
-                <p><strong>Fat:</strong> ${fatGrams} g</p>
-                <p><strong>Protein:</strong> ${proteinGrams} g</p>
-                <p><strong>Carbs:</strong> ${carbGrams} g</p>
+                <h2>Results</h2>
+                <p>Fat: ${fatGrams}g</p>
+                <p>Protein: ${proteinGrams}g</p>
+                <p>Carbs: ${carbGrams}g</p>
             `;
 
-            renderChart(fatGrams, proteinGrams, carbGrams);
             updateWeeklyPlanner(fatGrams, proteinGrams, carbGrams);
-        }
-
-        function renderChart(fatGrams, proteinGrams, carbGrams) {
-            const ctx = document.getElementById('myChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ['Fat', 'Protein', 'Carbs'],
-                    datasets: [{
-                        data: [fatGrams, proteinGrams, carbGrams],
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-                        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            });
+            createPieChart(fatGrams, proteinGrams, carbGrams);
         }
 
         function updateWeeklyPlanner(fatGrams, proteinGrams, carbGrams) {
@@ -214,13 +225,68 @@
             const dailyCarbs = (carbGrams / 7).toFixed(2);
 
             document.getElementById('monday-macro').innerText = dailyFat + "g Fat, " + dailyProtein + "g Protein, " + dailyCarbs + "g Carbs";
-            // Repeat for other days...
             document.getElementById('tuesday-macro').innerText = dailyFat + "g Fat, " + dailyProtein + "g Protein, " + dailyCarbs + "g Carbs";
             document.getElementById('wednesday-macro').innerText = dailyFat + "g Fat, " + dailyProtein + "g Protein, " + dailyCarbs + "g Carbs";
             document.getElementById('thursday-macro').innerText = dailyFat + "g Fat, " + dailyProtein + "g Protein, " + dailyCarbs + "g Carbs";
             document.getElementById('friday-macro').innerText = dailyFat + "g Fat, " + dailyProtein + "g Protein, " + dailyCarbs + "g Carbs";
             document.getElementById('saturday-macro').innerText = dailyFat + "g Fat, " + dailyProtein + "g Protein, " + dailyCarbs + "g Carbs";
             document.getElementById('sunday-macro').innerText = dailyFat + "g Fat, " + dailyProtein + "g Protein, " + dailyCarbs + "g Carbs";
+        }
+
+        function createPieChart(fatGrams, proteinGrams, carbGrams) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Fat', 'Protein', 'Carbs'],
+                    datasets: [{
+                        data: [fatGrams, proteinGrams, carbGrams],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Make it responsive
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += Math.round(context.raw) + 'g';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text("Keto Macro Calculator Results", 10, 10);
+            doc.text("Fat: " + document.querySelector('#result p:nth-child(2)').innerText, 10, 30);
+            doc.text("Protein: " + document.querySelector('#result p:nth-child(3)').innerText, 10, 40);
+            doc.text("Carbs: " + document.querySelector('#result p:nth-child(4)').innerText, 10, 50);
+            doc.text("Weekly Planner:", 10, 60);
+            doc.text(document.getElementById('monday-macro').innerText, 10, 70);
+            doc.text(document.getElementById('tuesday-macro').innerText, 10, 80);
+            doc.text(document.getElementById('wednesday-macro').innerText, 10, 90);
+            doc.text(document.getElementById('thursday-macro').innerText, 10, 100);
+            doc.text(document.getElementById('friday-macro').innerText, 10, 110);
+            doc.text(document.getElementById('saturday-macro').innerText, 10, 120);
+            doc.text(document.getElementById('sunday-macro').innerText, 10, 130);
+            
+            doc.save("Keto_Macro_Calculator_Results.pdf");
         }
 
         function clearForm() {
