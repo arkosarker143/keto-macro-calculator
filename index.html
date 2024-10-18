@@ -5,62 +5,198 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Keto Macro Calculator</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .form-group {
+      width: 48%; /* 2 inputs per row */
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    #result, #planner {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+    }
+    .advanced-options {
+      display: none;
+      flex-wrap: wrap;
+    }
+    .advanced-options .form-group {
+      width: 48%; /* Same layout as basic inputs */
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <h1>Keto Macro Calculator</h1>
     <form id="keto-form">
-      <label for="gender">Gender:</label>
-      <select id="gender">
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
-
-      <label for="age">Age:</label>
-      <input type="number" id="age" required>
-
-      <label for="weight">Weight (kg):</label>
-      <input type="number" id="weight" required>
-
-      <label for="height">Height (cm):</label>
-      <input type="number" id="height" required>
-
-      <label for="activity">Activity Level:</label>
-      <select id="activity">
-        <option value="sedentary">Sedentary</option>
-        <option value="light">Light Activity</option>
-        <option value="moderate">Moderate Activity</option>
-        <option value="active">Active</option>
-      </select>
-
-      <label for="goal">Goal:</label>
-      <select id="goal">
-        <option value="weightloss">Weight Loss</option>
-        <option value="maintenance">Maintenance</option>
-        <option value="muscle">Muscle Gain</option>
-      </select>
-
-      <!-- Advanced Mode for Custom Macros -->
-      <div id="advanced-mode" style="display:none;">
-        <label for="fat">Fat %:</label>
-        <input type="number" id="fat" placeholder="Enter Fat Percentage">
-        
-        <label for="protein">Protein %:</label>
-        <input type="number" id="protein" placeholder="Enter Protein Percentage">
-        
-        <label for="carbs">Carbs %:</label>
-        <input type="number" id="carbs" placeholder="Enter Carbs Percentage">
+      <!-- Basic Mode Fields -->
+      <div class="form-group">
+        <label for="age">Age:</label>
+        <input type="number" id="age" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="weight">Weight (kg):</label>
+        <input type="number" id="weight" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="height">Height (cm):</label>
+        <input type="number" id="height" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="gender">Gender:</label>
+        <select id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
       </div>
 
-      <input type="checkbox" id="advanced-toggle"> Enable Advanced Mode
+      <div class="form-group">
+        <label for="activity">Activity Level:</label>
+        <select id="activity">
+          <option value="sedentary">Sedentary</option>
+          <option value="light">Light Activity</option>
+          <option value="moderate">Moderate Activity</option>
+          <option value="active">Active</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="goal">Goal:</label>
+        <select id="goal">
+          <option value="weightloss">Weight Loss</option>
+          <option value="maintenance">Maintenance</option>
+          <option value="muscle">Muscle Gain</option>
+        </select>
+      </div>
+
+      <!-- Dropdown for switching modes -->
+      <div class="form-group" style="width: 100%;">
+        <label for="mode">Calculator Mode:</label>
+        <select id="mode">
+          <option value="basic">Basic Mode</option>
+          <option value="advanced">Advanced Mode (Custom Macros)</option>
+        </select>
+      </div>
+
+      <!-- Advanced Mode Fields -->
+      <div class="advanced-options" id="advanced-options">
+        <div class="form-group">
+          <label for="fat">Fat %:</label>
+          <input type="number" id="fat" placeholder="Enter Fat Percentage">
+        </div>
+        
+        <div class="form-group">
+          <label for="protein">Protein %:</label>
+          <input type="number" id="protein" placeholder="Enter Protein Percentage">
+        </div>
+        
+        <div class="form-group">
+          <label for="carbs">Carbs %:</label>
+          <input type="number" id="carbs" placeholder="Enter Carbs Percentage">
+        </div>
+      </div>
+
       <button type="button" onclick="calculateMacros()">Calculate</button>
     </form>
 
     <div id="result"></div>
-
     <div id="planner"></div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    document.getElementById('mode').addEventListener('change', function() {
+      const advancedOptions = document.getElementById('advanced-options');
+      if (this.value === 'advanced') {
+        advancedOptions.style.display = 'flex'; // Show advanced mode
+      } else {
+        advancedOptions.style.display = 'none'; // Hide advanced mode
+      }
+    });
+
+    function calculateMacros() {
+      // Placeholder function for macro calculation logic
+      const age = document.getElementById('age').value;
+      const weight = document.getElementById('weight').value;
+      const height = document.getElementById('height').value;
+      const gender = document.getElementById('gender').value;
+      const activity = document.getElementById('activity').value;
+      const goal = document.getElementById('goal').value;
+
+      const isAdvanced = document.getElementById('mode').value === 'advanced';
+      
+      let fat = 0, protein = 0, carbs = 0;
+      if (isAdvanced) {
+        fat = document.getElementById('fat').value || 0;
+        protein = document.getElementById('protein').value || 0;
+        carbs = document.getElementById('carbs').value || 0;
+      } else {
+        // Use default percentages based on goal
+        if (goal === 'weightloss') {
+          fat = 70;
+          protein = 25;
+          carbs = 5;
+        } else if (goal === 'maintenance') {
+          fat = 65;
+          protein = 30;
+          carbs = 5;
+        } else {
+          fat = 60;
+          protein = 35;
+          carbs = 5;
+        }
+      }
+
+      document.getElementById('result').innerHTML = `
+        <h3>Your Macro Results</h3>
+        <p>Fat: ${fat}%</p>
+        <p>Protein: ${protein}%</p>
+        <p>Carbs: ${carbs}%</p>
+      `;
+    }
+  </script>
 </body>
 </html>
