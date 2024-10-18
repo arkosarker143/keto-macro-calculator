@@ -15,7 +15,7 @@
     }
 
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 20px;
       background-color: white;
@@ -75,6 +75,10 @@
       border-radius: 4px;
     }
 
+    #planner {
+      display: none;
+    }
+
     .error {
       color: red;
       font-size: 14px;
@@ -120,6 +124,22 @@
       height: 400px;
     }
 
+    /* Weekly Planner */
+    #weekly-planner {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .planner-day {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
     /* Mobile responsiveness */
     @media (max-width: 768px) {
       form {
@@ -128,6 +148,10 @@
 
       button {
         margin-top: 10px;
+      }
+
+      #weekly-planner {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -193,122 +217,4 @@
         </select>
       </div>
 
-      <!-- Mode Switch and Advanced Options -->
-      <div class="full-width">
-        <label for="mode">Calculator Mode:</label>
-        <select id="mode">
-          <option value="basic">Basic Mode</option>
-          <option value="advanced">Advanced Mode (Custom Macros)</option>
-        </select>
-      </div>
-
-      <div class="advanced-options full-width" id="advanced-options">
-        <div>
-          <label for="fat">Fat %:</label>
-          <input type="number" id="fat" placeholder="Enter Fat Percentage">
-        </div>
-
-        <div>
-          <label for="protein">Protein %:</label>
-          <input type="number" id="protein" placeholder="Enter Protein Percentage">
-        </div>
-
-        <div>
-          <label for="carbs">Carbs %:</label>
-          <input type="number" id="carbs" placeholder="Enter Carbs Percentage">
-        </div>
-      </div>
-
-      <!-- Clear and Calculate Buttons -->
-      <div class="full-width">
-        <button type="button" onclick="clearForm()">Clear</button>
-        <button type="button" onclick="calculateMacros()">Calculate</button>
-        <button type="button" onclick="saveAsPDF()">Save as PDF</button>
-      </div>
-    </form>
-
-    <div id="result"></div>
-    <div id="chart-container">
-      <canvas id="myChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Chart.js Library -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- jsPDF Library for Saving PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <script>
-    // Toggle Advanced Mode
-    document.getElementById('mode').addEventListener('change', function() {
-      const advancedOptions = document.getElementById('advanced-options');
-      if (this.value === 'advanced') {
-        advancedOptions.style.display = 'grid';
-      } else {
-        advancedOptions.style.display = 'none';
-      }
-    });
-
-    // Switch between Metric and Imperial Units
-    document.getElementById('units').addEventListener('change', function() {
-      const weightLabel = document.querySelector('label[for="weight"]');
-      const heightLabel = document.querySelector('label[for="height"]');
-      const unit = this.value;
-
-      if (unit === 'imperial') {
-        weightLabel.textContent = 'Weight (lbs):';
-        heightLabel.textContent = 'Height (inches):';
-      } else {
-        weightLabel.textContent = 'Weight (kg):';
-        heightLabel.textContent = 'Height (cm):';
-      }
-    });
-
-    // Validate and Calculate Macros Function
-    function validateInputs() {
-      // Same validation logic as previously implemented
-    }
-
-    function calculateMacros() {
-      // Existing logic + update to include pie chart rendering
-    }
-
-    // Render Chart
-    function renderChart(fatGrams, proteinGrams, carbGrams) {
-      const ctx = document.getElementById('myChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Fat', 'Protein', 'Carbs'],
-          datasets: [{
-            data: [fatGrams, proteinGrams, carbGrams],
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-          }]
-        },
-        options: {
-          responsive: true
-        }
-      });
-    }
-
-    // Save Results as PDF
-    function saveAsPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      const resultText = document.getElementById('result').textContent;
-
-      doc.text(resultText, 10, 10);
-      doc.save('keto-macro-results.pdf');
-    }
-
-    // Clear Form
-    function clearForm() {
-      document.getElementById('keto-form').reset();
-      document.getElementById('result').innerHTML = '';
-      document.getElementById('myChart').remove();
-    }
-  </script>
-</body>
-</html>
+      <!-- Mode Switch
